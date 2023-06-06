@@ -139,7 +139,6 @@ var connectHandle = cattp.HandlerFunc[*chat.Server](func(w http.ResponseWriter, 
 })
 
 func makeInitialPayload(db *gorm.DB, user *chat.User) ([]byte, error) {
-
 	var chats *[]chat.Chat
 	tx := db.Joins("left join chat_users on chat_users.chat_id=chats.id").
 		Where("chat_users.user_id = ?", user.ID).
@@ -170,7 +169,7 @@ func makeInitialPayload(db *gorm.DB, user *chat.User) ([]byte, error) {
 	initialPayload := struct {
 		User     *chat.User      `json:"user"`
 		Chats    *[]chat.Chat    `json:"chats"`
-		Accounts *[]chat.Account `json:"accounts,omitempty"`
+		Accounts *[]chat.Account `json:"accounts"`
 		Users    *[]chat.User    `json:"users"`
 	}{user, chats, serverAccounts, users}
 
@@ -182,7 +181,6 @@ func makeInitialPayload(db *gorm.DB, user *chat.User) ([]byte, error) {
 	newRawEvent := &chat.RawEvent{Type: "initial", Data: jsonPayload}
 
 	jsonEvent, err := newRawEvent.Serialize()
-	fmt.Println(string(jsonEvent))
 	if err != nil {
 		return nil, err
 	}
