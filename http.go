@@ -128,7 +128,7 @@ var connectHandle = cattp.HandlerFunc[*chat.Server](func(w http.ResponseWriter, 
 	wg.Wait()
 
 	go func() {
-		channelsContext.NotifyChannel <- true
+		// channelsContext.NotifyChannel <- true
 		server.ClientsMu.Lock()
 		delete(server.Clients, client.ID)
 		server.ClientsMu.Unlock()
