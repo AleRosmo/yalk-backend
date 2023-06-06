@@ -142,8 +142,10 @@ func makeInitialPayload(db *gorm.DB, user *chat.User) ([]byte, error) {
 
 	var chats *[]chat.Chat
 	tx := db.Joins("left join chat_users on chat_users.chat_id=chats.id").
-		Where("chat_users.user_id = ?", user.ID). // TODO: Check for public chat
-		Preload("Messages").
+		Where("chat_users.user_id = ?", user.ID).
+		Preload("Messages", func(db *gorm.DB) *gorm.DB {
+			return db.Order("messages.timestamp ASC")
+		}).
 		Preload("Messages.User").
 		Preload("ChatType").
 		Find(&chats)
